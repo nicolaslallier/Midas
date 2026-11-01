@@ -1,0 +1,22 @@
+# Python (backend/)
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+*.egg-info/
+
+# Rust (functionapp/)
+target/
+
+# Node / Vue (frontend/)
+node_modules/
+*.local
+npm-debug.log*
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/*
