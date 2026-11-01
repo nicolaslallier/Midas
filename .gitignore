@@ -20,3 +20,6 @@ npm-debug.log*
 .DS_Store
 .idea/
 .vscode/*
+
+# One-time runner registration token — never commit
+deploy/.env

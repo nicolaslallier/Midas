@@ -1,0 +1,17 @@
+services:
+  midas-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: midas-runner
+    container_name: midas-runner
+    env_file: .env
+    environment:
+      GITHUB_RUNNER_LABELS: "midas,linux"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - runner-workspace:/__w
+    restart: unless-stopped
+
+volumes:
+  runner-workspace:

@@ -1,0 +1,44 @@
+name: cicd
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.14"
+          enable-cache: true
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: make ci
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: ci
+    runs-on: [self-hosted, linux, midas]
+    timeout-minutes: 30
+    env:
+      PORTAINER_URL: http://192.168.2.10:9000
+      PORTAINER_API_TOKEN: ${{ secrets.PORTAINER_API_TOKEN }}
+      PORTAINER_ENDPOINT_ID: ${{ secrets.PORTAINER_ENDPOINT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: make images
+      - run: make deploy
